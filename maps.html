@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>myGoogleMap</title>
+    <style>
+      #map{
+        height: 400px;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>My Google Map</h1>
+    <div id = "map"></div>
+
+    <script type="text/javascript">
+      function initMap(){
+        var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'
+        var options = {
+          zoom:8,
+          center: {lat:40.3440, lng:-74.6514}
+        }
+
+        var map = new
+        google.maps.Map(document.getElementById('map'),options)
+
+        var marker = new google.maps.Marker({
+          position:{lat:40.3428452, lng:-74.6568153},
+          map:map,
+          // icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'
+          icon:image
+        })
+
+        var infoWindows = new google.maps.infoWindow({
+          // content: '<h1>Alex Shin here'</h1>
+        });
+        marker.addListener
+      }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBm1U0LUpPZIraBBb6OxAMa9O6mXnrJgzk&callback=initMap">
+    </script>
+  </body>
+</html>
