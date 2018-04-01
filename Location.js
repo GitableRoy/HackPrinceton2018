@@ -11,7 +11,6 @@ class Location {
     navigator.geolocation.getCurrentPosition((pos) => {
       this.lat = pos.coords.latitude;
       this.lng = pos.coords.longitude;
-      this.print_loc();
     });
   }
 
@@ -19,12 +18,12 @@ class Location {
     navigator.geolocation.watchPosition((pos) => {
       this.lat = pos.coords.latitude;
       this.lng = pos.coords.longitude;
-      this.print_loc();
     });
   }
+  
+}
 
-  print_loc() {
-    console.log(this.lat);
-    console.log(this.lng);
-  }
+
+function zoomlevel(latdiff) {
+  return (Math.log(latdiff) - 6.6082) / (-0.6932) // c=6.6, d=-0.69, latdiff=exp(c+d*(zoom))
 }
