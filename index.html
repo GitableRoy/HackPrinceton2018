@@ -85,45 +85,53 @@
       }
       #message-list {
         position: absolute;
-        right: 40px;
+        right: 66.7%;
         bottom: 2px;
         border: 1px solid #333;
         color: #FFF;
         height: 200px;
-        width: 30%;
+        width: 31.8%;
         background-color: green;
         opacity: .95;
         font-family: Roboto;
+        padding-left: 10px;
+        padding-top: 10px;
       }
       #time-list {
         position: absolute;
-        right: 40px;
+        right: 33.36%;
         bottom: 2px;
         border: 1px solid #333;
         color: #FFF;
         height: 200px;
-        width: 30%;
-        background-color: red;
+        width: 32%;
+        background-color: pink;
         opacity: .95;
         font-family: Roboto;
+        padding-left: 10px;
+        padding-top: 10px;
       }
       #place-list {
         position: absolute;
-        right: 40px;
+        right: 2px;
         bottom: 2px;
         border: 1px solid #333;
         color: #FFF;
         height: 200px;
-        width: 30%;
+        width: 32%;
         background-color: grey;
         opacity: .95;
         font-family: Roboto;
+        padding-left: 10px;
+        padding-top: 10px;
       }
-      #upvoteBut{
-
+      #upvoteButton{
+        position: relative;
+        left: 43%;
       }
-      #downvoteBut{
-
+      #downvoteButton{
+        position: relative;
+        left: 48%;
       }
     </style>
   </head>
@@ -141,7 +149,14 @@
       <span id="place-address"></span>
     </div>
 
+    <div id="message-list">
+      <strong>Messages</strong>
+    </div>
+    <div id="time-list">
+      <strong>Times</strong>
+    </div>
     <div id="place-list">
+      <strong>Locations</strong>
     </div>
 
     <script>
