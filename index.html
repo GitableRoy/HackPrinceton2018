@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Coordinate</title>
+    <title>Place Autocomplete</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     <style>
@@ -83,55 +83,26 @@
         font-weight: 500;
         padding: 6px 12px;
       }
-      #message-list {
-        position: absolute;
-        right: 66.7%;
-        bottom: 2px;
-        border: 1px solid #333;
-        color: #FFF;
-        height: 200px;
-        width: 31.8%;
-        background-color: green;
-        opacity: .95;
-        font-family: Roboto;
-        padding-left: 10px;
-        padding-top: 10px;
-      }
-      #time-list {
-        position: absolute;
-        right: 33.36%;
-        bottom: 2px;
-        border: 1px solid #333;
-        color: #FFF;
-        height: 200px;
-        width: 32%;
-        background-color: pink;
-        opacity: .95;
-        font-family: Roboto;
-        padding-left: 10px;
-        padding-top: 10px;
-      }
+
       #place-list {
         position: absolute;
-        right: 2px;
+        right: 50px;
         bottom: 2px;
         border: 1px solid #333;
         color: #FFF;
         height: 200px;
         width: 32%;
         background-color: grey;
-        opacity: .95;
+        opacity: .70;
         font-family: Roboto;
         padding-left: 10px;
         padding-top: 10px;
       }
-      #upvoteButton{
-        position: relative;
-        left: 43%;
+      #upvoteBut{
+
       }
-      #downvoteButton{
-        position: relative;
-        left: 48%;
+      #downvoteBut{
+
       }
     </style>
   </head>
@@ -149,27 +120,22 @@
       <span id="place-address"></span>
     </div>
 
-    <div id="message-list">
-      <strong>Messages</strong>
-    </div>
-    <div id="time-list">
-      <strong>Times</strong>
-    </div>
     <div id="place-list">
-      <strong>Locations</strong>
     </div>
 
     <script>
 
       function attachClickListenerToButtonUp(button) {
         button.addEventListener('click', function() {
-          console.log("TODO: Implement upvote button action");
-        })
-      }
-
-      function attachClickListenerToButtonDown(button) {
-        button.addEventListener('click', function() {
-          console.log("TODO: Implement downvote button action");
+          var parentEl = button.parentElement;
+          var parentID = parentEl.id;
+          var upvoteScoreEl = parentEl.querySelector('#upvoteScore');
+          if (placeScores[parentID]) {
+            placeScores[parentID] = placeScores[parentID] + 1;
+          } else {
+            placeScores[parentID] = 1
+          }
+          upvoteScoreEl.innerHTML = placeScores[parentID];
         })
       }
 
@@ -177,9 +143,10 @@
       // parameter when you first load the API. For example:
       // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
       // VARIABLES
-      var flagImg = ''
+      var flagImg = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'
       var listOfPlace = [];
       var map;
+      var placeScores = [];
       // var votingStatus = [{"place: white house","voting":0}];
       // ? how do I make button
       // ? for loop where?
@@ -187,8 +154,9 @@
       function addToList(place) {
         var parentEl = document.getElementById('place-list');
         var newPlace = document.createElement('div');
-        var upButton = document.createElement('input');
-        var downButton = document.createElement('input');
+        var upButton = document.createElement('button');
+        var upVote = document.createElement('span');
+
         // Upvote
         upButton.type = 'image';
         upButton.src = 'http://www.chinacsr.com/cn/wp-content/uploads/thumb.png';
@@ -196,25 +164,37 @@
         upButton.width = "20";
         upButton.setAttribute('id', 'upvoteButton');
         attachClickListenerToButtonUp(upButton);
-        // Downvote
-        downButton.type = 'image';
-        downButton.src = 'http://icons.iconarchive.com/icons/custom-icon-design/pretty-office-8/256/Thumb-down-icon.png'
-        downButton.height = "20";
-        downButton.width = "20";
-        downButton.setAttribute('id', 'downvoteButton');
-        attachClickListenerToButtonDown(downButton);
-        // Place name
+        // // Downvote
+        // downButton.type = 'image';
+        // downButton.src = 'http://icons.iconarchive.com/icons/custom-icon-design/pretty-office-8/256/Thumb-down-icon.png'
+        // downButton.height = "20";
+        // downButton.width = "20";
+        // downButton.setAttribute('id', 'downvoteButton');
+        // attachClickListenerToButtonDown(downButton);
+
+
+        newPlace.setAttribute('id', 'place'+listOfPlace.length);
+        upButton.innerHTML = 'Up';
+        upButton.setAttribute('id', 'upvoteButton');
+        upVote.setAttribute('id','upvoteScore');
         newPlace.innerHTML = place.name;
-        // Add elements
         newPlace.append(upButton);
-        newPlace.append(downButton);
+        attachClickListenerToButtonUp(upButton);
+        upVote.innerHTML = 0;
+        newPlace.append(upVote);
         parentEl.append(newPlace);
+        console.log(newPlace.id);
+
+        placeScores[newPlace.id] = 0;
+        // console.log(placeScores[newPlace.id]);
+        // newPlace.append(placeScores[newPlace.id]);
+
       }
 
       function addPlace(placeList,name,place){
         placeList.push({name:name,place:place})
         // TODO: send to backEnd in JSON
-        console.log(JSON.stringify(placeList));
+
       }
 
       function addMarker(props){
