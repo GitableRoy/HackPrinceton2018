@@ -1,104 +1,337 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html>
   <head>
+    <title>Place Autocomplete</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-    <title>myGoogleMap</title>
     <style>
-      #map{
-        height: 400px;
-        width: 100%;
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #description {
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+      }
+
+      #infowindow-content .title {
+        font-weight: bold;
+      }
+
+      #infowindow-content {
+        display: none;
+      }
+
+      #map #infowindow-content {
+        display: inline;
+      }
+
+      .pac-card {
+        margin: 10px 10px 0 0;
+        border-radius: 2px 0 0 2px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        outline: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        background-color: #fff;
+        font-family: Roboto;
+      }
+
+      #pac-container {
+        /* padding-bottom: 12px; */
+        /* margin-right: 12px; */
+      }
+
+      .pac-controls {
+        display: inline-block;
+        padding: 5px 11px;
+      }
+
+      .pac-controls label {
+        font-family: Roboto;
+        font-size: 13px;
+        font-weight: 300;
+      }
+
+      #pac-input {
+        background-color: #fff;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        margin-left: 12px;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+        width: 400px;
+      }
+
+      #pac-input:focus {
+        border-color: #C43179;
+      }
+
+      #title {
+        color: #fff;
+        background-color: #C43179;
+        font-size: 25px;
+        font-weight: 500;
+        padding: 6px 12px;
+      }
+
+      #place-list {
+        position: absolute;
+        right: 50px;
+        bottom: 100px;
+        border: 1px solid #333;
+        color: #FFF;
+        padding: 30px;
+        background-color: grey;
+        opacity: .7;
+        font-family: Roboto;
+      }
+      #upvoteBut{
+
+      }
+      #downvoteBut{
+
       }
     </style>
   </head>
   <body>
-    console.log("Hello")
-    <h1>My Google Map</h1>
-    <div id = "map"></div>
+    <div class="pac-card" id="pac-card">
+      <div id="pac-container">
+        <input id="pac-input" type="text"
+            placeholder="Suggest Location">
+      </div>
+    </div>
+    <div id="map"></div>
+    <div id="infowindow-content">
+      <img src="" width="16" height="16" id="place-icon">
+      <span id="place-name"  class="title"></span><br>
+      <span id="place-address"></span>
+    </div>
 
-    <script type="text/javascript">
-      class Location {
-        constructor(){
-          this.lat = 0;
-          this.lng = 0;
-          this.log_loc();
-          this.continuously_update_loc();
-        }
-        log_loc() {
-          navigator.geolocation.getCurrentPosition((pos) => {
-            this.lat = pos.coords.latitude;
-            this.lng = pos.coords.longitude;
-            this.print_loc();
-          });
-        }
-        continuously_update_loc() {
-          navigator.geolocation.watchPosition((pos) => {
-            this.lat = pos.coords.latitude;
-            this.lng = pos.coords.longitude;
-            this.print_loc();
-          });
-        }
-        print_loc() {
-          console.log(this.lat);
-          console.log(this.lng);
-        }
+    <div id="place-list">
+    </div>
+
+    <script>
+
+      function attachClickListenerToButtonUp(button) {
+        button.addEventListener('click', function() {
+          console.log("test");
+        })
       }
 
-      function initMap(){
-        var flagImg = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'
+      // This example requires the Places library. Include the libraries=places
+      // parameter when you first load the API. For example:
+      // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
+      // VARIABLES
+      var flagImg = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'
+      var listOfPlace = [];
+      var map;
+      // var votingStatus = [{"place: white house","voting":0}];
+      // ? how do I make button
+      // ? for loop where?
+      // var allvoteupButtons = document.querySelectAll('#upvoteBut');
+      function addToList(place) {
+        var parentEl = document.getElementById('place-list');
+        var newPlace = document.createElement('div');
+        var upButton = document.createElement('button');
+        upButton.innerHTML = 'Upvote';
+        upButton.setAttribute('id', 'upvoteButton');
+        newPlace.innerHTML = place.name;
+        newPlace.append(upButton);
+        attachClickListenerToButtonUp(upButton);
 
-        // Initial location
-        var options = {
-          zoom:5,
-          center: {lat:40.3440, lng:-74.6514}
-        }
-        var map = new google.maps.Map(document.getElementById('map'),options);
+        parentEl.append(newPlace);
+      }
 
-        // Current location
-        var loc = new Location();
+      function addPlace(placeList,name,place){
+        placeList.push({name:name,place:place})
+        // TODO: send to backEnd in JSON
+        console.log(JSON.stringify(placeList));
+      }
 
-        // Marker array
-        var markers = [
-          {
-            coords:{lat:42.3428452, lng:-75.6568153},
-            iconImage: flagImg,
-            content: '<h1>Alex Shin here</h1>'
-          },
-          {coords:{lat:40.3428452, lng:-74.6568153}},
-          {coords:{lat:44.3428452, lng:-79.6568153}}
-        ];
+      function addMarker(props){
+        var marker = new google.maps.Marker({
+          position:props.geometry.location,
+          map:map,
+          icon:flagImg
+        });
 
-        for(var i = 0; i < markers.length;i++){
-            addMarker(markers[i]);
-        }
-
-        function addMarker(props){
-          var marker = new google.maps.Marker({
-            position:props.coords,
-            map:map
-          });
-          if(props.iconImage)
-            marker.setIcon(props.iconImage);
-          if(props.content){
-              var infoWindow = new google.maps.InfoWindow({
-                content: props.content
-              });
-            marker.addListener('click',function(){
-              infoWindow.open(map,marker);
+        if(props.content){
+            var infoWindow = new google.maps.InfoWindow({
+              content: props.content
             });
-          };
-        }
+        };
+      }
 
-        google.maps.event.addListener(map,'click',function(event){
-          //Add marker
-          addMarker({coords:event.latLng});
-          console.log(event.latLng);
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat:40.3440, lng:-74.6514},
+          zoom: 16,
+          styles: [
+            {elementType: 'geometry', stylers: [{color: '#242f3e'}]},
+            {elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]},
+            {elementType: 'labels.text.fill', stylers: [{color: '#746855'}]},
+            {
+              featureType: 'administrative.locality',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#d59563'}]
+            },
+            {
+              featureType: 'poi',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#d59563'}]
+            },
+            {
+              featureType: 'poi.park',
+              elementType: 'geometry',
+              stylers: [{color: '#263c3f'}]
+            },
+            {
+              featureType: 'poi.park',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#6b9a76'}]
+            },
+            {
+              featureType: 'road',
+              elementType: 'geometry',
+              stylers: [{color: '#38414e'}]
+            },
+            {
+              featureType: 'road',
+              elementType: 'geometry.stroke',
+              stylers: [{color: '#212a37'}]
+            },
+            {
+              featureType: 'road',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#9ca5b3'}]
+            },
+            {
+              featureType: 'road.highway',
+              elementType: 'geometry',
+              stylers: [{color: '#746855'}]
+            },
+            {
+              featureType: 'road.highway',
+              elementType: 'geometry.stroke',
+              stylers: [{color: '#1f2835'}]
+            },
+            {
+              featureType: 'road.highway',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#f3d19c'}]
+            },
+            {
+              featureType: 'transit',
+              elementType: 'geometry',
+              stylers: [{color: '#2f3948'}]
+            },
+            {
+              featureType: 'transit.station',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#d59563'}]
+            },
+            {
+              featureType: 'water',
+              elementType: 'geometry',
+              stylers: [{color: '#17263c'}]
+            },
+            {
+              featureType: 'water',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#515c6d'}]
+            },
+            {
+              featureType: 'water',
+              elementType: 'labels.text.stroke',
+              stylers: [{color: '#17263c'}]
+            }
+          ]
+        });
+
+        // style for auto complete results
+        var card = document.getElementById('pac-card');
+        var input = document.getElementById('pac-input');
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(card);
+
+        var autocomplete = new google.maps.places.Autocomplete(input);
+
+        // Bind the map's bounds (viewport) property to the autocomplete object,
+        // so that the autocomplete requests use the current map bounds for the
+        // bounds option in the request.
+        autocomplete.bindTo('bounds', map);
+
+        var infowindow = new google.maps.InfoWindow();
+        var infowindowContent = document.getElementById('infowindow-content');
+        infowindow.setContent(infowindowContent);
+        var marker = new google.maps.Marker({
+          map: map,
+          anchorPoint: new google.maps.Point(0, -29),
+          icon:flagImg
+        });
+        // ON CLICK
+        //
+        // button.addListener('click',function(){
+        //   // increment / decrement voting values
+        //   votingStatus[0].voting+=1;
+        //   console.log(votingStatus[0].voting);
+        // })
+
+        autocomplete.addListener('place_changed', function() {
+          infowindow.close();
+          // marker.setVisible(false);
+          // NOTE: place JSON by autocomplete.getPlace();
+          var place = autocomplete.getPlace();
+          // console.log(JSON.stringify(place));
+          if (!place.geometry) {
+            // User entered the name of a Place that was not suggested and
+            // pressed the Enter key, or the Place Details request failed.
+            window.alert("No details available for input: '" + place.name + "'");
+            return;
+          }else{
+            console.log(place.name);
+            addPlace(listOfPlace,"Alex",place.name);
+            addMarker(place);
+            addToList(place);
+          }
+
+
+          // If the place has a geometry, then present it on a map.
+          if (place.geometry.viewport) {
+            map.fitBounds(place.geometry.viewport);
+          } else {
+            map.setCenter(place.geometry.location);
+            map.setZoom(17);  // Why 17? Because it looks good.
+          }
+          marker.setPosition(place.geometry.location);
+          // marker.setVisible(true);
+
+          var address = '';
+          if (place.address_components) {
+            address = [
+              (place.address_components[0] && place.address_components[0].short_name || ''),
+              (place.address_components[1] && place.address_components[1].short_name || ''),
+              (place.address_components[2] && place.address_components[2].short_name || '')
+            ].join(' ');
+          }
+
+          infowindowContent.children['place-icon'].src = place.icon;
+          infowindowContent.children['place-name'].textContent = place.name;
+          infowindowContent.children['place-address'].textContent = address;
+          infowindow.open(map, marker);
         });
       }
-
-      // Add Marker Function
     </script>
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBm1U0LUpPZIraBBb6OxAMa9O6mXnrJgzk&callback=initMap">
-    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBm1U0LUpPZIraBBb6OxAMa9O6mXnrJgzk&libraries=places&callback=initMap"
+        async defer></script>
   </body>
 </html>
