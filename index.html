@@ -124,7 +124,13 @@
 
       function attachClickListenerToButtonUp(button) {
         button.addEventListener('click', function() {
-          console.log("test");
+          console.log("TODO: Implement upvote button action");
+        })
+      }
+
+      function attachClickListenerToButtonDown(button) {
+        button.addEventListener('click', function() {
+          console.log("TODO: Implement downvote button action");
         })
       }
 
@@ -142,13 +148,27 @@
       function addToList(place) {
         var parentEl = document.getElementById('place-list');
         var newPlace = document.createElement('div');
-        var upButton = document.createElement('button');
-        upButton.innerHTML = 'Upvote';
+        var upButton = document.createElement('input');
+        var downButton = document.createElement('input');
+        // Upvote
+        upButton.type = 'image';
+        upButton.src = 'http://www.chinacsr.com/cn/wp-content/uploads/thumb.png';
+        upButton.height = "20";
+        upButton.width = "20";
         upButton.setAttribute('id', 'upvoteButton');
-        newPlace.innerHTML = place.name;
-        newPlace.append(upButton);
         attachClickListenerToButtonUp(upButton);
-
+        // Downvote
+        downButton.type = 'image';
+        downButton.src = 'http://icons.iconarchive.com/icons/custom-icon-design/pretty-office-8/256/Thumb-down-icon.png'
+        downButton.height = "20";
+        downButton.width = "20";
+        downButton.setAttribute('id', 'downvoteButton');
+        attachClickListenerToButtonDown(downButton);
+        // Place name
+        newPlace.innerHTML = place.name;
+        // Add elements
+        newPlace.append(upButton);
+        newPlace.append(downButton);
         parentEl.append(newPlace);
       }
 
