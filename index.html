@@ -21,19 +21,19 @@
         font-size: 15px;
         font-weight: 300;
       }
-
+ 
       #infowindow-content .title {
         font-weight: bold;
       }
-
+ 
       #infowindow-content {
         display: none;
       }
-
+ 
       #map #infowindow-content {
         display: inline;
       }
-
+ 
       .pac-card {
         margin: 10px 10px 0 0;
         border-radius: 2px 0 0 2px;
@@ -44,17 +44,17 @@
         background-color: #fff;
         font-family: Roboto;
       }
-
+ 
       #pac-container {
         /* padding-bottom: 12px; */
         /* margin-right: 12px; */
       }
-
+ 
       .pac-controls {
         display: inline-block;
         padding: 5px 11px;
       }
-
+ 
       .pac-controls label {
         font-family: Roboto;
         font-size: 13px;
@@ -71,11 +71,11 @@
         text-overflow: ellipsis;
         width: 400px;
       }
-
+ 
       #pac-input:focus {
         border-color: #C43179;
       }
-
+ 
       #title {
         color: #fff;
         background-color: #C43179;
@@ -160,25 +160,26 @@
       <span id="place-name"  class="title"></span><br>
       <span id="place-address"></span>
     </div>
-
+ 
     <div id="message-list">
       <strong>Messages</strong>
     </div>
-
+ 
     <div id="time-list">
       <strong>Times</strong>
     </div>
-
+ 
     <div id="place-list">
       <strong>Locations</strong>
     </div>
-
+ 
     <script>
-
+ 
       // PLACES
-
-
+ 
+ 
       // LOCATIONS
+
 
       function attachClickListenerToButtonUp(button) {
         button.addEventListener('click', function() {
@@ -193,7 +194,7 @@
           upvoteScoreEl.innerHTML = placeScoresUp[parentID];
         });
       }
-
+ 
       function attachClickListenerToButtonDown(button) {
         button.addEventListener('click', function() {
           var parentEl = button.parentElement; 
@@ -208,6 +209,7 @@
         });
       }
 
+ 
       // This example requires the Places library. Include the libraries=places
       // parameter when you first load the API. For example:
       // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
@@ -255,29 +257,28 @@
         placeScoresUp[newPlace.id] = 0;
         placeScoresDown[newPlace.id] = 0; 
       }
-
+ 
       function addPlace(placeList,name,place){
         placeList.push({name:name,place:place})
         // TODO: send to backEnd in JSON
         console.log(JSON.stringify(placeList));
       }
-
       function addMarker(props){
         var marker = new google.maps.Marker({
           position:props.geometry.location,
           map:map,
           icon:flagImg
         });
-
+ 
         if(props.content){
             var infoWindow = new google.maps.InfoWindow({
               content: props.content
             });
         };
       }
-
+ 
       // MAP
-
+ 
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
           center: {lat:40.3440, lng:-74.6514},
@@ -453,19 +454,19 @@
             }
         ]
         });
-
+ 
         // style for auto complete results
         var card = document.getElementById('pac-card');
         var input = document.getElementById('pac-input');
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(card);
-
+ 
         var autocomplete = new google.maps.places.Autocomplete(input);
-
+ 
         // Bind the map's bounds (viewport) property to the autocomplete object,
         // so that the autocomplete requests use the current map bounds for the
         // bounds option in the request.
         autocomplete.bindTo('bounds', map);
-
+ 
         var infowindow = new google.maps.InfoWindow();
         var infowindowContent = document.getElementById('infowindow-content');
         infowindow.setContent(infowindowContent);
@@ -481,7 +482,7 @@
         //   votingStatus[0].voting+=1;
         //   console.log(votingStatus[0].voting);
         // })
-
+ 
         autocomplete.addListener('place_changed', function() {
           infowindow.close();
           // marker.setVisible(false);
@@ -499,8 +500,8 @@
             addMarker(place);
             addToList(place);
           }
-
-
+ 
+ 
           // If the place has a geometry, then present it on a map.
           if (place.geometry.viewport) {
             map.fitBounds(place.geometry.viewport);
@@ -510,16 +511,16 @@
           }
           marker.setPosition(place.geometry.location);
           // marker.setVisible(true);
-
+ 
           var address = '';
           if (place.address_components) {
             address = [
-              (place.address_components[0] && place.address_components[0].short_name || ''),
+            (place.address_components[0] && place.address_components[0].short_name || ''),
               (place.address_components[1] && place.address_components[1].short_name || ''),
               (place.address_components[2] && place.address_components[2].short_name || '')
             ].join(' ');
           }
-
+ 
           infowindowContent.children['place-icon'].src = place.icon;
           infowindowContent.children['place-name'].textContent = place.name;
           infowindowContent.children['place-address'].textContent = address;
