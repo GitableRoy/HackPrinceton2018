@@ -127,11 +127,23 @@
       }
       #upvoteButton{
         position: relative;
-        left: 43%;
+        left: 10px;
+        width: 20px;
       }
       #downvoteButton{
         position: relative;
-        left: 48%;
+        left: 25px;
+        width: 20px;
+      }
+      #upvoteScore{
+        position: relative;
+        left:15px;
+        width: 20px;
+      }
+      #downvoteScore{
+        position: relative;
+        left:30px;
+        width: 20px;
       }
     </style>
   </head>
@@ -152,25 +164,48 @@
     <div id="message-list">
       <strong>Messages</strong>
     </div>
+
     <div id="time-list">
       <strong>Times</strong>
     </div>
+
     <div id="place-list">
       <strong>Locations</strong>
     </div>
 
     <script>
 
+      // PLACES
+
+
+      // LOCATIONS
+
       function attachClickListenerToButtonUp(button) {
         button.addEventListener('click', function() {
-          console.log("TODO: Implement upvote button action");
-        })
+          var parentEl = button.parentElement; 
+          var parentID = parentEl.id; 
+          var upvoteScoreEl = parentEl.querySelector('#upvoteScore'); 
+          if (placeScoresUp[parentID]) { 
+            placeScoresUp[parentID] = placeScoresUp[parentID] + 1; 
+          } else { 
+            placeScoresUp[parentID] = 1 
+          } 
+          upvoteScoreEl.innerHTML = placeScoresUp[parentID];
+        });
       }
 
       function attachClickListenerToButtonDown(button) {
         button.addEventListener('click', function() {
-          console.log("TODO: Implement downvote button action");
-        })
+          var parentEl = button.parentElement; 
+          var parentID = parentEl.id; 
+          var downvoteScoreEl = parentEl.querySelector('#downvoteScore'); 
+          if (placeScoresDown[parentID]) { 
+            placeScoresDown[parentID] = placeScoresDown[parentID] + 1; 
+          } else { 
+            placeScoresDown[parentID] = 1 
+          } 
+          downvoteScoreEl.innerHTML = placeScoresDown[parentID];
+        });
       }
 
       // This example requires the Places library. Include the libraries=places
@@ -180,6 +215,8 @@
       var flagImg = ''
       var listOfPlace = [];
       var map;
+      var placeScoresUp = [];
+      var placeScoresDown = [];
       // var votingStatus = [{"place: white house","voting":0}];
       // ? how do I make button
       // ? for loop where?
@@ -189,12 +226,15 @@
         var newPlace = document.createElement('div');
         var upButton = document.createElement('input');
         var downButton = document.createElement('input');
+        var upVote = document.createElement('span');
+        var downVote = document.createElement('span');
         // Upvote
         upButton.type = 'image';
         upButton.src = 'http://www.chinacsr.com/cn/wp-content/uploads/thumb.png';
         upButton.height = "20";
         upButton.width = "20";
         upButton.setAttribute('id', 'upvoteButton');
+        upVote.setAttribute('id','upvoteScore');
         attachClickListenerToButtonUp(upButton);
         // Downvote
         downButton.type = 'image';
@@ -202,13 +242,18 @@
         downButton.height = "20";
         downButton.width = "20";
         downButton.setAttribute('id', 'downvoteButton');
+        downVote.setAttribute('id','downvoteScore');
         attachClickListenerToButtonDown(downButton);
         // Place name
         newPlace.innerHTML = place.name;
         // Add elements
         newPlace.append(upButton);
+        newPlace.append(upVote);
         newPlace.append(downButton);
+        newPlace.append(downVote);
         parentEl.append(newPlace);
+        placeScoresUp[newPlace.id] = 0;
+        placeScoresDown[newPlace.id] = 0; 
       }
 
       function addPlace(placeList,name,place){
@@ -230,6 +275,8 @@
             });
         };
       }
+
+      // MAP
 
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
@@ -481,6 +528,7 @@
       }
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBm1U0LUpPZIraBBb6OxAMa9O6mXnrJgzk&libraries=places&callback=initMap"
-        async defer></script>
+        async defer>
+    </script>
   </body>
 </html>
